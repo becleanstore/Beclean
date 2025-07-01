@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>صفحة الإدارة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      direction: rtl;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding-bottom: 100px;
+    }
+
+    .admin-header {
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(90deg, #007cf0, #00dfd8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 30px auto;
+}
+
+    #searchBar {
+      width: 80%;
+      max-width: 400px;
+      padding: 10px;
+      margin: 10px auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .products-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .product {
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      padding: 15px;
+      width: 145px;
+      text-align: center;
+    }
+
+    .product img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .product h3 {
+      font-size: 16px;
+      margin: 8px 0 4px;
+      color: #333;
+    }
+
+    .product .price {
+      font-size: 14px;
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .product button {
+      margin: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    #addProductButton {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #2980b9;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #addProductButton:hover {
+            transform: scale(1.1);
+            background-color: #3e8e41;
+        }
+
+        #addProductModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #addProductFormContainer {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+        }
+
+        #addProductForm label {
+            display: block;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        #addProductForm input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #addProductForm button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #addProductForm button:hover {
+            background-color: #3e8e41;
+        }
+
+    .closeButton {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    #successMessage {
+  display: none;
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  z-index: 2000;
+  font-size: 17px;
+  animation: slideDownFade 0.4s ease;
+}
+
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+    #loginModal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+  z-index: 3000;
+}
+
+#loginContainer {
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+#loginContainer h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+}
+
+#loginContainer input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+#loginContainer button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#loginContainer button:hover {
+  background-color: #2980b9;
+}
+
+@keyframes fadeIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.product.hidden {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+.action-btn {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+  display: inline-block;
+}
+
+.action-btn:hover {
+  background-color: #2980b9;
+}
+  </style>
+</head>
+<body>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; direction: ltr;">
+  <button onclick="toggleCoverForm()" class="action-btn">تغيير غلاف المتجر</button>
+  <button id="logoutButton" onclick="logout()" class="action-btn" style="display: none;">
+  تسجيل الخروج
+</button>
+</div>
+<div id="coverForm" style="display: none; padding: 10px;">
+  <input type="text" id="coverInput" placeholder="أدخل رابط صورة الغلاف" style="width: 80%; padding: 6px;">
+  
+  <button onclick="saveCoverImage()" class="action-btn">حفظ الغلاف</button>
+  </div>
+  <button id="logoutButton" onclick="logout()" class="action-btn" style="display: none;">
+  تسجيل الخروج
+</button>
+  <div id="successMessage">✅ تمت إضافة المنتج بنجاح</div>
+
+  <!-- نافذة تسجيل الدخول -->
+  <div id="loginModal">
+  <div id="loginContainer">
+    <h2> الإدارة</h2>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة السر">
+    <button onclick="checkPassword()">دخول</button>
+  </div>
+</div>
+
+  <h1 class="admin-header"> Be Clean Owner</h1>
+
+  <input type="text" id="searchBar" placeholder="ابحث عن منتج..." style="display: none;">
+
+  <div class="products-container" id="productsContainer"></div>
+
+<div id="pagination" style="margin-top: 20px;"></div>
+
+  <div id="addProductButton" onclick="openAddModal()" style="display: none;">+</div>
+
+  <div id="addProductModal">
+    <div id="addProductFormContainer">
+      <span class="closeButton" onclick="closeModal()">×</span>
+      <h2 id="formTitle">إضافة منتج جديد</h2>
+      <form id="addProductForm">
+        <input type="hidden" id="editIndex">
+        <label>اسم المنتج:</label>
+        <input type="text" id="name" required>
+
+        <label>السعر:</label>
+        <input type="number" id="price" required>
+
+        <label>الكمية في العلبة:</label>
+        <input type="number" id="pack" required>
+
+        <label>رابط الصورة:</label>
+        <input type="text" id="img" required>
+
+        <div style="display: flex; gap: 10px; justify-content: center;">
+  <button type="submit">حفظ</button>
+  <button type="button" id="toggleHideButton" style="display: none;">إخفاء</button>
+</div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let currentEdit = null;
+
+    const productsContainer = document.getElementById('productsContainer');
+    const addProductModal = document.getElementById('addProductModal');
+    const form = document.getElementById('addProductForm');
+    const successMessage = document.getElementById('successMessage');
+    const searchBar = document.getElementById('searchBar');
+
+    function renderProducts(page = 1) {
+  const query = searchBar.value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+  const itemsPerPage = 16;
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const currentProducts = filtered.slice(start, end);
+
+  productsContainer.innerHTML = '';
+  currentProducts.forEach((product, index) => {
+    const realIndex = products.indexOf(filtered[start + index]);
+    const div = document.createElement('div');
+    div.className = 'product' + (product.hidden ? ' hidden' : '');
+    div.innerHTML = `
+      <img src="${product.img}" alt="${product.name}">
+      <h3>${product.name}</h3>
+      <div class="price">${product.price} دج</div>
+      <div>الكمية في العلبة: ${product.pack}</div>
+      <button class="edit-btn" onclick="editProduct(${realIndex})">تعديل</button>
+      <button class="delete-btn" onclick="deleteProduct(${realIndex})">حذف</button>
+    `;
+    productsContainer.appendChild(div);
+  });
+
+  // أزرار الترقيم
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = '';
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.style.margin = '0 5px';
+    btn.style.padding = '5px 10px';
+    btn.style.borderRadius = '6px';
+    btn.style.border = '1px solid #ccc';
+    btn.style.backgroundColor = (i === page) ? '#3498db' : '#fff';
+    btn.style.color = (i === page) ? '#fff' : '#000';
+    btn.style.cursor = 'pointer';
+    btn.onclick = () => renderProducts(i);
+    pagination.appendChild(btn);
+  }
+}
+
+    function openAddModal() {
+      currentEdit = null;
+      form.reset();
+      document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
+      document.getElementById('editIndex').value = '';
+      addProductModal.style.display = 'flex';
+      document.getElementById('toggleHideButton').style.display = 'none';
+    }
+
+    function closeModal() {
+      addProductModal.style.display = 'none';
+    }
+
+    function showSuccess() {
+      successMessage.style.display = 'block';
+      setTimeout(() => successMessage.style.display = 'none', 3000);
+    }
+
+    form.onsubmit = function(e) {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const price = document.getElementById('price').value;
+  const pack = document.getElementById('pack').value;
+  const img = document.getElementById('img').value;
+
+  const index = document.getElementById('editIndex').value;
+  let newProduct = {
+  name,
+  price: Number(price),
+  pack: Number(pack),
+  img
+};
+
+  if (index) {
+    newProduct.id = products[index].id; // احتفظ بالـ id القديم
+    products[+index] = newProduct;
+  } else {
+    newProduct.id = Date.now(); // id جديد
+    products.push(newProduct);
+  }
+
+  localStorage.setItem('products', JSON.stringify(products));
+  form.reset();
+  closeModal();
+  renderProducts();
+  showSuccess();
+};
+
+    function deleteProduct(index) {
+      if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟')) {
+        products.splice(index, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
+    function editProduct(index) {
+  const product = products[index];
+  document.getElementById('name').value = product.name;
+  document.getElementById('price').value = product.price;
+  document.getElementById('pack').value = product.pack;
+  document.getElementById('img').value = product.img;
+  document.getElementById('editIndex').value = index;
+  document.getElementById('formTitle').textContent = 'تعديل المنتج';
+  addProductModal.style.display = 'flex';
+
+  const hideBtn = document.getElementById('toggleHideButton');
+  hideBtn.style.display = 'inline-block';
+  hideBtn.textContent = products[index].hidden ? 'إظهار' : 'إخفاء';
+
+  hideBtn.onclick = function () {
+    products[index].hidden = !products[index].hidden;
+    localStorage.setItem('products', JSON.stringify(products));
+    hideBtn.textContent = products[index].hidden ? 'إظهار' : 'إخفاء';
+    renderProducts(); // ← هذا السطر يجعل البطاقة تُعيد الرسم وتُطبق CSS
+  };
+}
+
+    searchBar.addEventListener('input', () => renderProducts(1));
+
+    // حماية بكلمة مرور
+    function checkPassword() {
+      const input = document.getElementById('adminPassword').value;
+      if (input === 'BrahimBB2025') {
+  localStorage.setItem('auth', 'true');
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('logoutButton').style.display = 'block';
+  document.getElementById('searchBar').style.display = 'block';
+  document.getElementById('addProductButton').style.display = 'flex';
+  renderProducts();
+}
+      else {
+        alert('كلمة المرور خاطئة');
+      }
+    }
+
+    window.onload = function() {
+  if (localStorage.getItem('auth') === 'true') {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('logoutButton').style.display = 'block';
+    document.getElementById('searchBar').style.display = 'block';
+    document.getElementById('addProductButton').style.display = 'flex'; // ✅ أضف هذا السطر
+    renderProducts();
+  } else {
+    document.getElementById('loginModal').style.display = 'flex';
+  }
+};
+    // إغلاق النافذة عند الضغط على الخلفية
+addProductModal.addEventListener('click', function (e) {
+  if (e.target === addProductModal) {
+    closeModal();
+  }
+});
+function logout() {
+  const confirmLogout = confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟");
+  if (confirmLogout) {
+    localStorage.removeItem('auth');
+    location.reload();
+  }
+}
+
+function toggleCoverForm() {
+  const form = document.getElementById("coverForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function saveCoverImage() {
+  const link = document.getElementById("coverInput").value.trim();
+  if (link) {
+    localStorage.setItem("coverImage", link);
+    alert("✅ تم حفظ صورة الغلاف بنجاح");
+  } else {
+    alert("⚠️ يرجى إدخال رابط صالح");
+  }
+}
+</script>
+</body>
+</html>
