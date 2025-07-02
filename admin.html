@@ -23,19 +23,25 @@
       margin: 30px auto;
     }
     .products-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .product {
-      background-color: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin: 10px;
-      padding: 15px;
-      width: 145px;
-      text-align: center;
-    }
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 بطاقات في السطر على الهاتف */
+  gap: 15px;
+  padding: 10px;
+}
+
+@media (min-width: 992px) {
+  .products-container {
+    grid-template-columns: repeat(5, 1fr); /* 5 بطاقات في السطر على الحاسوب */
+  }
+}
+
+.product {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: center;
+}
     .product img {
       width: 100%;
       height: 140px;
@@ -76,46 +82,166 @@
 </head>
 <body>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; direction: rtl;">
+  <!-- الزر لإظهار النافذة -->
+<button id="addProductBtn"
+  style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; background-color: #3498db; color: white; border: none; border-radius: 50%; width: 56px; height: 56px; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+  +
+</button>
   <button id="logoutButton" onclick="logout()" class="action-btn" style="display: none;">تسجيل الخروج</button>
   <button onclick="toggleCoverForm()" class="action-btn">تغيير غلاف المتجر</button>
-</div><div id="coverForm" style="display: none; padding: 10px;">
+</div>
+<div id="coverForm" style="display: none; padding: 10px;">
   <input type="text" id="coverInput" placeholder="أدخل رابط صورة الغلاف" style="width: 80%; padding: 6px;">
   <button onclick="saveCoverImage()" class="action-btn">حفظ الغلاف</button>
-</div><div id="successMessage" style="display:none;position:fixed;top:30px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:12px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.3);z-index:2000;font-size:17px;">
+</div>
+<div id="successMessage" style="display:none;position:fixed;top:30px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:12px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.3);z-index:2000;font-size:17px;">
   ✅ تمت إضافة المنتج بنجاح
-</div><div id="loginModal" style="display:flex;justify-content:center;align-items:center;position:fixed;inset:0;background:linear-gradient(135deg,#74ebd5,#ACB6E5);z-index:3000;">
+</div>
+<div id="loginModal" style="display:flex;justify-content:center;align-items:center;position:fixed;inset:0;background:linear-gradient(135deg,#74ebd5,#ACB6E5);z-index:3000;">
   <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.3);width:90%;max-width:400px;text-align:center;">
-    <h2>الإدارة</h2>
-    <input type="password" id="adminPassword" placeholder="أدخل كلمة السر" style="width:100%;padding:12px;margin-bottom:15px;">
-    <button onclick="checkPassword()" class="action-btn" style="width:100%;">دخول</button>
+    <h2 style="margin-bottom: 20px;">الإدارة</h2>
+    
+    <input
+      type="password"
+      id="adminPassword"
+      placeholder="أدخل كلمة السر"
+      style="width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box;"
+    >
+
+    <button
+      onclick="checkPassword()"
+      style="width: 100%; padding: 12px 14px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 15px; cursor: pointer;"
+    >
+      دخول
+    </button>
   </div>
-</div><div id="addProductButton" onclick="openAddModal()"
-  style="position:fixed;bottom:20px;left:20px;background-color:#27ae60;color:white;border-radius:50%;width:60px;height:60px;font-size:36px;display:none;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(0,0,0,0.3);z-index:1000;cursor:pointer;">
-  +
-</div><div id="addProductModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:1001;justify-content:center;align-items:center;">
-  <div style="background:white;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.2);width:80%;max-width:500px;position:relative;">
-    <span style="position:absolute;top:10px;left:10px;font-size:20px;cursor:pointer;" onclick="closeModal()">×</span>
-    <h2 id="formTitle">إضافة منتج جديد</h2>
-    <form id="addProductForm">
+</div>
+<div id="addProductModal" onclick="closeModalOnClickOutside(event)" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Cairo', sans-serif;
+">
+  <div style="
+    background: white;
+    padding: 24px 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 420px;
+    position: relative;
+  " onclick="event.stopPropagation()">
+    
+    <!-- زر الإغلاق -->
+    <span style="
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #aaa;
+      transition: 0.3s;
+    " onclick="closeModal()">×</span>
+
+    <!-- عنوان -->
+    <h2 id="formTitle" style="
+      margin-bottom: 18px;
+      font-size: 20px;
+      color: #3498db;
+      text-align: center;
+      font-weight: 500;
+    ">إضافة منتج جديد</h2>
+
+    <!-- النموذج -->
+    <form id="addProductForm" style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+
       <input type="hidden" id="editIndex">
-      <label>اسم المنتج:</label>
-      <input type="text" id="name" required>
-      <label>السعر:</label>
-      <input type="number" id="price" required>
-      <label>الكمية في العلبة:</label>
-      <input type="number" id="pack" required>
-      <label>رابط الصورة:</label>
-      <input type="text" id="img" required>
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
-        <button type="submit" class="action-btn">حفظ</button>
+
+      <!-- كل خانة -->
+      <div style="width: 85%; text-align: right;">
+        <label style="font-size: 13px; font-weight: 400; color: #444; margin-bottom: 4px; display: block;">اسم المنتج:</label>
+        <input type="text" id="name" required style="
+          width: 100%;
+          padding: 6px 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 300;
+          background-color: #fafafa;
+        ">
       </div>
+
+      <div style="width: 85%; text-align: right;">
+        <label style="font-size: 13px; font-weight: 400; color: #444; margin-bottom: 4px; display: block;">السعر:</label>
+        <input type="number" id="price" required style="
+          width: 100%;
+          padding: 6px 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 300;
+          background-color: #fafafa;
+        ">
+      </div>
+
+      <div style="width: 85%; text-align: right;">
+        <label style="font-size: 13px; font-weight: 400; color: #444; margin-bottom: 4px; display: block;">الكمية في العلبة:</label>
+        <input type="number" id="pack" required style="
+          width: 100%;
+          padding: 6px 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 300;
+          background-color: #fafafa;
+        ">
+      </div>
+
+      <div style="width: 85%; text-align: right;">
+        <label style="font-size: 13px; font-weight: 400; color: #444; margin-bottom: 4px; display: block;">رابط الصورة:</label>
+        <input type="text" id="img" required style="
+          width: 100%;
+          padding: 6px 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 300;
+          background-color: #fafafa;
+        ">
+      </div>
+
+      <!-- زر الحفظ -->
+      <div style="margin-top: 10px;">
+        <button type="submit" class="action-btn" style="
+          padding: 8px 22px;
+          font-size: 14px;
+          background-color: #3498db;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: 0.3s;
+        ">حفظ</button>
+      </div>
+
     </form>
   </div>
-</div><h1 class="admin-header">Be Clean Owner</h1>
+</div>
+</div>
 <div id="coverBanner" style="margin: 20px;">
   <img id="coverImage" src="" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;" />
 </div>
-<div class="products-container" id="productsContainer"></div><script type="module">
+<h1 class="admin-header">Be Clean Owner</h1>
+<div class="products-container" id="productsContainer"></div>
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
@@ -128,7 +254,6 @@ const firebaseConfig = {
   messagingSenderId: "642453605386",
   appId: "1:642453605386:web:33897dd22521bbf6ff23f3"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const productsRef = ref(db, 'products');
@@ -188,7 +313,7 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     img: document.getElementById('img').value,
     hidden: false
   };
-
+cov
   if (id) {
     update(ref(db, 'products/' + id), product);
   } else {
@@ -209,7 +334,7 @@ function showSuccess() {
 
 window.openAddModal = function () {
   document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
-  document.getElementById('addProductModal').style.display = 'flex';
+  document.getElementById('addProductBtn').style.display = 'block';
   document.getElementById('addProductForm').reset();
   document.getElementById('editIndex').value = '';
 };
@@ -230,7 +355,7 @@ window.checkPassword = function () {
     localStorage.setItem('auth', 'true');
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('logoutButton').style.display = 'block';
-    document.getElementById('addProductButton').style.display = 'flex';
+    document.getElementById('addProductBtn').style.display = 'block';
   } else {
     alert('كلمة المرور خاطئة');
   }
@@ -269,13 +394,23 @@ window.saveCoverImage = function () {
   }
 };
 
+// ✅ الدمج الصحيح لـ onload
 window.onload = function () {
   if (localStorage.getItem('auth') === 'true') {
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('logoutButton').style.display = 'block';
-    document.getElementById('addProductButton').style.display = 'flex';
+    document.getElementById('addProductBtn').style.display = 'block';
   }
+
+  document.getElementById('addProductBtn').addEventListener('click', () => {
+    document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
+    document.getElementById('addProductForm').reset();
+    document.getElementById('editIndex').value = '';
+    document.getElementById('addProductModal').style.display = 'flex';
+  });
+
   renderCoverImage();
 };
-</script></body>
+</script>
+</body>
 </html>
