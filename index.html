@@ -397,10 +397,15 @@ document.getElementById("sendOrder").onclick = () => {
   const phoneNumber = "213562622988"; // ← ضع رقمك هنا بدون "+"
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
 
+
   window.open(whatsappLink, "_blank");
-  localStorage.removeItem("cart");
+
+localStorage.removeItem("cart");
 cart = [];
-  document.getElementById("cartModal").style.display = 'none';
+
+document.getElementById("cartModal").style.display = 'none';
+renderCart();
+renderProducts();
 };
 
 </script>
@@ -468,6 +473,10 @@ imageModal.addEventListener("click", function (e) {
       renderProducts();  // إعادة عرض المنتجات لتحديث الكمية في الأزرار
     }
   }
+  // حذف السلة فقط عند إعادة تحميل الصفحة (يدويًا) وليس من الكود
+if (performance.navigation.type === 1) {
+  localStorage.removeItem('cart');
+}
 </script>
 </body>
 </html>
