@@ -339,7 +339,7 @@ function renderPagination() {
 const productsPerPage = 20;
 let allVisibleProducts = [];
 let cart = [];
-let userLocation = localStorage.getItem("userLocation") || "";
+let userLocation = localStorage.getItem("userLocation") || "لم يتم تحديد الموقع";
 try {
   const savedCart = localStorage.getItem("cart");
   if (savedCart) {
@@ -401,11 +401,12 @@ function getLocation() {
     alert("المتصفح لا يدعم تحديد الموقع.");
   }
 }
+window.getLocation = getLocation;
 document.getElementById("sendOrder").onclick = () => {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
-const userLocation = localStorage.getItem("userLocation") || "لم يتم تحديد الموقع";
+let userLocation = localStorage.getItem("userLocation") || ""; "لم يتم تحديد الموقع";
   if (!name || !phone || !address || cart.length === 0) {
     alert("يرجى ملء جميع الخانات وإضافة منتجات إلى السلة.");
     return;
