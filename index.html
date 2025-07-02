@@ -163,6 +163,15 @@
 <h1 class="store-header">Be Clean Store</h1>
   <div class="products-container" id="productsContainer"></div>
   <div id="pagination" style="margin-top: 20px; text-align: center;"></div>
+  <div id="locationSection" style="margin: 10px 0; text-align: center;">
+  <button onclick="getLocation()" style="margin-top: 8px; background: transparent; border: 1px solid rgba(0, 123, 255, 0.4); border-radius: 8px; display: inline-flex; align-items: center; padding: 6px 12px; cursor: pointer;">
+    <img src="https://i.postimg.cc/bw4QT6LS/Google-Maps-icon-2020-svg.png" alt="Google Maps" style="width: 28px; height: 28px; margin-left: 8px;">
+    <span style="font-size: 14px; color: #007bff;">تحديد الموقع عبر Google Maps</span>
+  </button>
+  <p style="font-size: 12px; color: #555; margin-top: 4px;">
+    الرجاء الضغط على الزر لتحديد موقعك قبل إرسال الطلب
+  </p>
+</div>
 <button id="cartBtn">🛒</button>
   <!-- سكربت Firebase -->
   <script type="module">
@@ -329,7 +338,8 @@ function renderPagination() {
     let currentPage = 1;
 const productsPerPage = 20;
 let allVisibleProducts = [];
-    let cart = [];
+let cart = [];
+let userLocation = localStorage.getItem("userLocation") || "";
 try {
   const savedCart = localStorage.getItem("cart");
   if (savedCart) {
@@ -376,12 +386,26 @@ function renderCart() {
   const cartTotalEl = document.getElementById("cartTotal");
   cartTotalEl.textContent = `المجموع: ${total} دج`;
 }
-
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      userLocation = `https://www.google.com/maps?q=${lat},${lng}`;
+      localStorage.setItem("userLocation", userLocation); // ← أضفنا هذا السطر
+      alert("تم تحديد موقعك بنجاح!");
+    }, function(error) {
+      alert("فشل في تحديد الموقع. تأكد من تفعيل GPS.");
+    });
+  } else {
+    alert("المتصفح لا يدعم تحديد الموقع.");
+  }
+}
 document.getElementById("sendOrder").onclick = () => {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
-
+const userLocation = localStorage.getItem("userLocation") || "لم يتم تحديد الموقع";
   if (!name || !phone || !address || cart.length === 0) {
     alert("يرجى ملء جميع الخانات وإضافة منتجات إلى السلة.");
     return;
@@ -392,7 +416,7 @@ document.getElementById("sendOrder").onclick = () => {
   return `• ${p.quantity} . ${p.name} × ${p.price} = ${total} دج`;
 }).join('%0A');
 
-  const message = `طلب جديد من متجر Be Clean:%0A%0A${itemsText}%0A%0A الاسم: ${name}%0A الهاتف: ${phone}%0A العنوان: ${address}`;
+  const message = `طلب جديد من متجر Be Clean:%0A%0A${itemsText}%0A%0A الاسم: ${name}%0A الهاتف: ${phone}%0A العنوان: ${address}%0A%0Aالموقع الجغرافي: ${userLocation || "لم يتم تحديد الموقع"}`;
 
   const phoneNumber = "213562622988"; // ← ضع رقمك هنا بدون "+"
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
