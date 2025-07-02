@@ -97,6 +97,10 @@
 <div id="successMessage" style="display:none;position:fixed;top:30px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:12px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.3);z-index:2000;font-size:17px;">
   ✅ تمت إضافة المنتج بنجاح
 </div>
+<div style="text-align: center; margin: 20px 0;">
+  <input type="text" id="searchInput" placeholder="ابحث عن منتج..." 
+         style="padding: 10px; width: 80%; max-width: 300px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo', sans-serif;" />
+</div>
 <div id="loginModal" style="display:flex;justify-content:center;align-items:center;position:fixed;inset:0;background:linear-gradient(135deg,#74ebd5,#ACB6E5);z-index:3000;">
   <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.3);width:90%;max-width:400px;text-align:center;">
     <h2 style="margin-bottom: 20px;">الإدارة</h2>
@@ -313,6 +317,7 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     img: document.getElementById('img').value,
     hidden: false
   };
+cov
   if (id) {
     update(ref(db, 'products/' + id), product);
   } else {
@@ -350,7 +355,7 @@ document.getElementById('addProductModal').addEventListener('click', function (e
 
 window.checkPassword = function () {
   const input = document.getElementById('adminPassword').value;
-  if (input === 'admin') {
+  if (input === 'BrahimBB2025') {
     localStorage.setItem('auth', 'true');
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('logoutButton').style.display = 'block';
@@ -401,6 +406,7 @@ window.onload = function () {
     document.getElementById('addProductBtn').style.display = 'block';
   }
 
+  // زر + فقط هو من يفتح نافذة إضافة المنتج
   document.getElementById('addProductBtn').addEventListener('click', () => {
     document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
     document.getElementById('addProductForm').reset();
@@ -410,6 +416,19 @@ window.onload = function () {
 
   renderCoverImage();
 };
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchTerm = this.value.toLowerCase();
+  const cards = document.querySelectorAll(".product");
+
+  cards.forEach(card => {
+    const name = card.querySelector("h3")?.textContent.toLowerCase() || "";
+    if (name.includes(searchTerm)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+});
 </script>
 </body>
 </html>
