@@ -398,6 +398,8 @@ document.getElementById("sendOrder").onclick = () => {
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
 
   window.open(whatsappLink, "_blank");
+  localStorage.removeItem("cart");
+cart = [];
   document.getElementById("cartModal").style.display = 'none';
 };
 
@@ -454,6 +456,18 @@ imageModal.addEventListener("click", function (e) {
     imageModal.style.display = "none";
   }
 });
+  function removeFromCart(index) {
+    // استرجاع السلة من localStorage إذا لم تكن موجودة
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // التحقق من أن المؤشر صالح
+    if (index >= 0 && index < cart.length) {
+      cart.splice(index, 1); // إزالة العنصر
+      localStorage.setItem("cart", JSON.stringify(cart)); // حفظ التحديث
+      renderCart();      // إعادة عرض السلة
+      renderProducts();  // إعادة عرض المنتجات لتحديث الكمية في الأزرار
+    }
+  }
 </script>
 </body>
 </html>
