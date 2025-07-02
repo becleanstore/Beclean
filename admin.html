@@ -245,6 +245,7 @@
 </div>
 <h1 class="admin-header">Be Clean Owner</h1>
 <div class="products-container" id="productsContainer"></div>
+<div id="pagination" style="margin-top: 20px;"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
@@ -264,9 +265,20 @@ const productsRef = ref(db, 'products');
 
 const container = document.getElementById('productsContainer');
 
-function renderProducts(data) {
+let allProducts = {};
+let currentPage = 1;
+const productsPerPage = 20;
+
+function renderProductsPage(page) {
+  const container = document.getElementById('productsContainer');
   container.innerHTML = '';
-  Object.entries(data).forEach(([id, product]) => {
+
+  const productsArray = Object.entries(allProducts);
+  const start = (page - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  const pageItems = productsArray.slice(start, end);
+
+  pageItems.forEach(([id, product]) => {
     const div = document.createElement('div');
     div.className = 'product';
     div.innerHTML = `
@@ -279,11 +291,22 @@ function renderProducts(data) {
     `;
     container.appendChild(div);
   });
+
+  renderPagination(getPagesCount(), page);
+}
+
+function getPagesCount() {
+  return Math.ceil(Object.keys(allProducts).length / productsPerPage);
+}
+
+function showPage(page) {
+  currentPage = page;
+  renderProductsPage(page);
 }
 
 onValue(productsRef, (snapshot) => {
-  const data = snapshot.val() || {};
-  renderProducts(data);
+  allProducts = snapshot.val() || {};
+  showPage(currentPage);
 });
 
 window.deleteProduct = function(id) {
@@ -429,6 +452,27 @@ document.getElementById("searchInput").addEventListener("input", function () {
     }
   });
 });
+function renderPagination(totalPages, currentPage) {
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.style.cssText = `
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 50%;
+      background-color: ${i === currentPage ? '#007bff' : '#e0e0e0'};
+      color: ${i === currentPage ? 'white' : 'black'};
+      font-size: 14px;
+      cursor: pointer;
+    `;
+    btn.onclick = () => showPage(i);
+    pagination.appendChild(btn);
+  }
+}
 </script>
 </body>
 </html>
