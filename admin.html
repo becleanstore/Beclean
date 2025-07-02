@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>Be Clean Owner - Firebase</title>
@@ -61,14 +60,8 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .edit-btn {
-      background-color: #3498db;
-      color: white;
-    }
-    .delete-btn {
-      background-color: #e74c3c;
-      color: white;
-    }
+    .edit-btn { background-color: #3498db; color: white; }
+    .delete-btn { background-color: #e74c3c; color: white; }
     .action-btn {
       padding: 10px 16px;
       font-size: 14px;
@@ -82,96 +75,26 @@
   </style>
 </head>
 <body>
-  <!-- زر تغيير صورة الغلاف -->
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; direction: ltr;">
-  <button onclick="toggleCoverForm()" class="action-btn">تغيير غلاف المتجر</button>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; direction: rtl;">
   <button id="logoutButton" onclick="logout()" class="action-btn" style="display: none;">تسجيل الخروج</button>
-</div>
-
-<!-- نموذج صورة الغلاف -->
-<div id="coverForm" style="display: none; padding: 10px;">
+  <button onclick="toggleCoverForm()" class="action-btn">تغيير غلاف المتجر</button>
+</div><div id="coverForm" style="display: none; padding: 10px;">
   <input type="text" id="coverInput" placeholder="أدخل رابط صورة الغلاف" style="width: 80%; padding: 6px;">
   <button onclick="saveCoverImage()" class="action-btn">حفظ الغلاف</button>
-</div>
-
-<!-- رسالة النجاح -->
-<div id="successMessage" style="
-  display: none;
-  position: fixed;
-  top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  z-index: 2000;
-  font-size: 17px;">
+</div><div id="successMessage" style="display:none;position:fixed;top:30px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:12px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.3);z-index:2000;font-size:17px;">
   ✅ تمت إضافة المنتج بنجاح
-</div>
-
-<!-- نافذة تسجيل الدخول -->
-<div id="loginModal" style="
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-  z-index: 3000;">
-  <div style="
-    background-color: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;">
+</div><div id="loginModal" style="display:flex;justify-content:center;align-items:center;position:fixed;inset:0;background:linear-gradient(135deg,#74ebd5,#ACB6E5);z-index:3000;">
+  <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.3);width:90%;max-width:400px;text-align:center;">
     <h2>الإدارة</h2>
-    <input type="password" id="adminPassword" placeholder="أدخل كلمة السر" style="width: 100%; padding: 12px; margin-bottom: 15px;">
-    <button onclick="checkPassword()" class="action-btn" style="width: 100%;">دخول</button>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة السر" style="width:100%;padding:12px;margin-bottom:15px;">
+    <button onclick="checkPassword()" class="action-btn" style="width:100%;">دخول</button>
   </div>
-</div>
-
-<!-- زر إضافة منتج -->
-<div id="addProductButton" onclick="openAddModal()" style="
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background-color: #2980b9;
-  color: white;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 30px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  cursor: pointer;">+</div>
-
-<!-- نافذة إضافة/تعديل منتج -->
-<div id="addProductModal" style="
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1001;
-  justify-content: center;
-  align-items: center;">
-  <div style="
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 500px;">
-    <span style="position: absolute; top: 10px; left: 10px; font-size: 20px; cursor: pointer;" onclick="closeModal()">×</span>
+</div><div id="addProductButton" onclick="openAddModal()"
+  style="position:fixed;bottom:20px;left:20px;background-color:#27ae60;color:white;border-radius:50%;width:60px;height:60px;font-size:36px;display:none;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(0,0,0,0.3);z-index:1000;cursor:pointer;">
+  +
+</div><div id="addProductModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:1001;justify-content:center;align-items:center;">
+  <div style="background:white;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.2);width:80%;max-width:500px;position:relative;">
+    <span style="position:absolute;top:10px;left:10px;font-size:20px;cursor:pointer;" onclick="closeModal()">×</span>
     <h2 id="formTitle">إضافة منتج جديد</h2>
     <form id="addProductForm">
       <input type="hidden" id="editIndex">
@@ -183,167 +106,143 @@
       <input type="number" id="pack" required>
       <label>رابط الصورة:</label>
       <input type="text" id="img" required>
-      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
         <button type="submit" class="action-btn">حفظ</button>
-        <button type="button" id="toggleHideButton" class="action-btn" style="display: none;">إخفاء</button>
       </div>
     </form>
   </div>
+</div><h1 class="admin-header">Be Clean Owner</h1>
+<div id="coverBanner" style="margin: 20px;">
+  <img id="coverImage" src="" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;" />
 </div>
-  <h1 class="admin-header">Be Clean Owner</h1>
-  <div id="coverBanner" style="margin: 20px;">
-  <img id="coverImage" src="" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px;" />
-</div>
-  <div class="products-container" id="productsContainer"></div>
-  <!-- ✅ السكربت المعدل بالكامل مع حل مشكلة كلمة المرور والـ import --><script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+<div class="products-container" id="productsContainer"></div><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCXViTdCSm7K7n6arMh7-kmTW9qboXI0Gs",
-    authDomain: "beclean-store.firebaseapp.com",
-    databaseURL: "https://beclean-store-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "beclean-store",
-    storageBucket: "beclean-store.appspot.com",
-    messagingSenderId: "642592719578",
-    appId: "1:642592719578:web:4adcd4800e19f777621be3"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBJ_HabLDYFG9yCK7TtY5dY1gihRtHQH5Q",
+  authDomain: "becleans-b7297.firebaseapp.com",
+  databaseURL: "https://becleans-b7297-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "becleans-b7297",
+  storageBucket: "becleans-b7297.appspot.com",
+  messagingSenderId: "642453605386",
+  appId: "1:642453605386:web:33897dd22521bbf6ff23f3"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const productsRef = ref(db, 'products');
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const productsRef = ref(db, 'products');
 
-  const container = document.getElementById('productsContainer');
+const container = document.getElementById('productsContainer');
 
-  function renderProducts(data) {
-    container.innerHTML = '';
-    Object.entries(data).forEach(([id, product]) => {
-      const div = document.createElement('div');
-      div.className = 'product' + (product.hidden ? ' hidden' : '');
-      div.innerHTML = `
-        <img src="${product.img}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        <div class="price">${product.price} دج</div>
-        <div>الكمية في العلبة: ${product.pack}</div>
-        <button class="edit-btn" onclick="editProduct('${id}')">تعديل</button>
-        <button class="delete-btn" onclick="deleteProduct('${id}')">حذف</button>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  onValue(productsRef, (snapshot) => {
-    const data = snapshot.val() || {};
-    renderProducts(data);
+function renderProducts(data) {
+  container.innerHTML = '';
+  Object.entries(data).forEach(([id, product]) => {
+    const div = document.createElement('div');
+    div.className = 'product';
+    div.innerHTML = `
+      <img src="${product.img}" alt="${product.name}">
+      <h3>${product.name}</h3>
+      <div class="price">${product.price} دج</div>
+      <div>الكمية في العلبة: ${product.pack}</div>
+      <button class="edit-btn" onclick="editProduct('${id}')">تعديل</button>
+      <button class="delete-btn" onclick="deleteProduct('${id}')">حذف</button>
+    `;
+    container.appendChild(div);
   });
+}
 
-  window.deleteProduct = function (id) {
-    if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟')) {
-      remove(ref(db, `products/${id}`));
-    }
-  };
+onValue(productsRef, (snapshot) => {
+  const data = snapshot.val() || {};
+  renderProducts(data);
+});
 
-  window.editProduct = function (id) {
-    const productRef = ref(db, `products/${id}`);
-    onValue(productRef, (snapshot) => {
-      
-      const p = snapshot.val();
-if (!p) return;
+window.deleteProduct = function(id) {
+  if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟')) {
+    remove(ref(db, `products/${id}`));
+  }
+};
 
-document.getElementById('name').value = p.name;
-document.getElementById('price').value = p.price;
-document.getElementById('pack').value = p.pack;
-document.getElementById('img').value = p.img;
-document.getElementById('editIndex').value = id;
-document.getElementById('formTitle').textContent = 'تعديل المنتج';
-document.getElementById('addProductModal').style.display = 'flex';
-    
-    }, { onlyOnce: true });
-  };
-
-  document.getElementById('addProductForm').onsubmit = function (e) {
-    e.preventDefault();
-    const id = document.getElementById('editIndex').value;
-    const product = {
-      name: document.getElementById('name').value,
-      price: +document.getElementById('price').value,
-      pack: +document.getElementById('pack').value,
-      img: document.getElementById('img').value,
-      hidden: false
-    };
-
-    if (id) {
-      update(ref(db, 'products/' + id), product);
-    } else {
-      const newRef = push(productsRef);
-      set(newRef, product);
-    }
-
-    document.getElementById('addProductModal').style.display = 'none';
-    e.target.reset();
-    showSuccess();
-  };
-
-  window.openAddModal = function () {
-    document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
+window.editProduct = function(id) {
+  const productRef = ref(db, `products/${id}`);
+  onValue(productRef, (snapshot) => {
+    const p = snapshot.val();
+    if (!p) return;
+    document.getElementById('name').value = p.name;
+    document.getElementById('price').value = p.price;
+    document.getElementById('pack').value = p.pack;
+    document.getElementById('img').value = p.img;
+    document.getElementById('editIndex').value = id;
+    document.getElementById('formTitle').textContent = 'تعديل المنتج';
     document.getElementById('addProductModal').style.display = 'flex';
-    document.getElementById('addProductForm').reset();
-    document.getElementById('editIndex').value = '';
-    document.getElementById('toggleHideButton').style.display = 'none';
-  };
-
-  window.closeModal = function () {
-    document.getElementById('addProductModal').style.display = 'none';
-  };
-
-  function showSuccess() {
-    const msg = document.getElementById('successMessage');
-    msg.style.display = 'block';
-    setTimeout(() => msg.style.display = 'none', 3000);
-  }
-
-  window.checkPassword = function () {
-    const input = document.getElementById('adminPassword').value;
-   if (input === 'admin') {
-      localStorage.setItem('auth', 'true');
-      document.getElementById('loginModal').style.display = 'none';
-      document.getElementById('logoutButton').style.display = 'block';
-      document.getElementById('addProductButton').style.display = 'flex';
-    } else {
-      alert('كلمة المرور خاطئة');
-    }
-  };
-
-  window.onload = function () {
-    if (localStorage.getItem('auth') === 'true') {
-      document.getElementById('loginModal').style.display = 'none';
-      document.getElementById('logoutButton').style.display = 'block';
-      document.getElementById('addProductButton').style.display = 'flex';
-    }
-    renderCoverImage();
-  };
-
-  window.logout = function () {
-    if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
-      localStorage.removeItem('auth');
-      location.reload();
-    }
-  };
-  window.toggleCoverForm = function () {
-  const form = document.getElementById('coverForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }, { onlyOnce: true });
 };
 
-window.saveCoverImage = function () {
-  const link = document.getElementById("coverInput").value.trim();
-  if (link) {
-    set(ref(db, 'store/cover'), { url: link })
-      .then(() => alert("✅ تم حفظ صورة الغلاف في Firebase"))
-      .catch(() => alert("❌ حدث خطأ أثناء الحفظ"));
+document.getElementById('addProductForm').onsubmit = function(e) {
+  e.preventDefault();
+  const id = document.getElementById('editIndex').value;
+  const product = {
+    name: document.getElementById('name').value,
+    price: +document.getElementById('price').value,
+    pack: +document.getElementById('pack').value,
+    img: document.getElementById('img').value,
+    hidden: false
+  };
+
+  if (id) {
+    update(ref(db, 'products/' + id), product);
   } else {
-    alert("❌ الرجاء إدخال رابط صحيح للصورة");
+    const newRef = push(productsRef);
+    set(newRef, product);
+  }
+
+  document.getElementById('addProductModal').style.display = 'none';
+  e.target.reset();
+  showSuccess();
+};
+
+function showSuccess() {
+  const msg = document.getElementById('successMessage');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 3000);
+}
+
+window.openAddModal = function () {
+  document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
+  document.getElementById('addProductModal').style.display = 'flex';
+  document.getElementById('addProductForm').reset();
+  document.getElementById('editIndex').value = '';
+};
+
+window.closeModal = function () {
+  document.getElementById('addProductModal').style.display = 'none';
+};
+
+document.getElementById('addProductModal').addEventListener('click', function (e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+
+window.checkPassword = function () {
+  const input = document.getElementById('adminPassword').value;
+  if (input === 'admin') {
+    localStorage.setItem('auth', 'true');
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('logoutButton').style.display = 'block';
+    document.getElementById('addProductButton').style.display = 'flex';
+  } else {
+    alert('كلمة المرور خاطئة');
   }
 };
+
+window.logout = function () {
+  if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
+    localStorage.removeItem('auth');
+    location.reload();
+  }
+};
+
 function renderCoverImage() {
   const coverRef = ref(db, 'store/cover');
   onValue(coverRef, (snapshot) => {
@@ -353,6 +252,30 @@ function renderCoverImage() {
     }
   });
 }
-</script>
-</body>
+
+window.toggleCoverForm = function () {
+  const form = document.getElementById('coverForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+};
+
+window.saveCoverImage = function () {
+  const link = document.getElementById("coverInput").value.trim();
+  if (link) {
+    set(ref(db, 'store/cover'), { url: link })
+      .then(() => alert("✅ تم حفظ صورة الغلاف"))
+      .catch(() => alert("❌ حدث خطأ أثناء الحفظ"));
+  } else {
+    alert("❌ الرجاء إدخال رابط صحيح");
+  }
+};
+
+window.onload = function () {
+  if (localStorage.getItem('auth') === 'true') {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('logoutButton').style.display = 'block';
+    document.getElementById('addProductButton').style.display = 'flex';
+  }
+  renderCoverImage();
+};
+</script></body>
 </html>
