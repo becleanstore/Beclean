@@ -413,11 +413,15 @@ let userLocation = localStorage.getItem("userLocation") || ""; "لم يتم تح
   }
 
   const itemsText = cart.map(p => {
-  const total = p.price * p.quantity;
-  return `• ${p.quantity} . ${p.name} × ${p.price} = ${total} دج`;
+  const total = (p.price * p.quantity).toLocaleString('ar-DZ');
+  const unitPrice = p.price.toLocaleString('ar-DZ');
+  const qty = p.quantity;
+  return `• ${qty} × ${p.name} @ ${unitPrice} دج = ${total} دج`;
 }).join('%0A');
+const totalPrice = cart.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+const totalText = `%0Aالمجموع الكلي: ${totalPrice.toLocaleString('ar-DZ')} دج`;
 
-  const message = `طلب جديد من متجر Be Clean:%0A%0A${itemsText}%0A%0A الاسم: ${name}%0A الهاتف: ${phone}%0A العنوان: ${address}%0A%0Aالموقع الجغرافي: ${userLocation || "لم يتم تحديد الموقع"}`;
+  const message = `طلب جديد من متجر Be Clean:%0A%0A${itemsText}${totalText}%0A%0Aالاسم: ${name}%0Aالهاتف: ${phone}%0Aالعنوان: ${address}%0A%0Aالموقع الجغرافي: ${userLocation || "لم يتم تحديد الموقع"}`;
 
   const phoneNumber = "213562622988"; // ← ضع رقمك هنا بدون "+"
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
