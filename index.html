@@ -25,61 +25,148 @@
     }
 
     .products-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding-bottom: 50px;
-    }
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 20px;
+  justify-items: center;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .products-container {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
 
-    .product {
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin: 10px;
-      padding: 15px;
-      width: 150px;
-      text-align: center;
-    }
+@media (min-width: 768px) {
+  .products-container {
+    grid-template-columns: repeat(5, 1fr); /* 5 بطاقات على الحاسوب */
+  }
+}
 
-    .product img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 10px;
-    }
+.product {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 100%;
+  max-width: 180px;
+  box-sizing: border-box;
+  text-align: center;
+  transition: transform 0.2s ease;
+  font-family: 'Cairo', sans-serif;
+}
 
-    .product h3 {
-      font-size: 16px;
-      margin: 8px 0 4px;
-      color: #333;
-    }
+.product:hover {
+  transform: translateY(-5px);
+}
 
-    .product .price {
-      font-size: 14px;
-      color: #27ae60;
-      font-weight: bold;
-    }
+.product img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
 
-    .product .pack {
-      font-size: 13px;
-      color: #666;
-    }
+.product h3 {
+  margin: 8px 0 4px;
+  font-size: 17px;
+  color: #333;
+}
+
+.product .price {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.product .pack {
+  font-size: 14px;
+  color: #777;
+}
+
+.product input[type="number"] {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-family: 'Cairo', sans-serif;
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .product {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1025px) {
+  .product {
+    width: 18%;
+  }
+}
+#cartBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+  }
+
+  #cartBtn:hover {
+    background-color: #0056b3;
+  }
+  .page-btn {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  margin: 5px;
+  border-radius: 50%;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.page-btn:hover {
+  background-color: #0056b3;
+}
+
+.page-btn.active {
+  background-color: #0056b3;
+}
   </style>
 </head>
 <body>
 
-  <h1 class="store-header">منتجات Be Clean</h1>
-
   <div id="coverBanner" style="margin: 20px;">
     <img id="coverImage" src="" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px;" />
   </div>
-
+<h1 class="store-header">Be Clean Store</h1>
   <div class="products-container" id="productsContainer"></div>
-
+  <div id="pagination" style="margin-top: 20px; text-align: center;"></div>
+<button id="cartBtn">🛒</button>
   <!-- سكربت Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -91,43 +178,281 @@
       messagingSenderId: "642453605386",
       appId: "1:642453605386:web:33897dd22521bbf6ff23f3"
     };
+    
 
+function showCartModal() {
+  renderCart();
+  document.getElementById("cartModal").style.display = 'flex';
+}
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const productsRef = ref(db, 'products');
-    const coverRef = ref(db, 'store/cover');
+const db = getDatabase(app);
+const productsRef = ref(db, 'products');
+const coverRef = ref(db, 'store/cover');
 
-    const container = document.getElementById('productsContainer');
+function renderCoverImage() {
+  onValue(coverRef, (snapshot) => {
+    const data = snapshot.val();
+    const img = document.getElementById("coverImage");
+    if (img && data && data.url) {
+      img.src = data.url;
+    }
+  });
+}
+
+renderCoverImage(); // ← هذا السطر مهم لتشغيل الدالة
+renderCoverImage(); // ← بعد تهيئة db
+
+const container = document.getElementById('productsContainer');
 
     onValue(productsRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      renderProducts(data);
-    });
+  const data = snapshot.val() || {};
+  allVisibleProducts = Object.entries(data)
+  .filter(([_, p]) => p && !p.hidden)
+  .map(([id, p]) => ({ ...p, id }));
+  renderProducts();        // ← لا تمرّر data هنا
+  renderPagination();      // ← لعرض أزرار الصفحات
+});
 
-    function renderProducts(data) {
-      container.innerHTML = '';
-      Object.values(data).forEach(product => {
-        if (!product.hidden) {
-          const div = document.createElement('div');
-          div.className = 'product';
-          div.innerHTML = `
-            <img src="${product.img}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <div class="price">${product.price} دج</div>
-            <div class="pack">الكمية في العلبة: ${product.pack}</div>
-          `;
-          container.appendChild(div);
-        }
-      });
+    function renderProducts() {
+  container.innerHTML = '';
+
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const productsToShow = allVisibleProducts.slice(startIndex, endIndex);
+
+  if (productsToShow.length === 0) {
+    container.innerHTML = '<p>لا توجد منتجات متاحة حالياً.</p>';
+    return;
+  }
+
+  productsToShow.forEach(product => {
+  const div = document.createElement('div');
+  div.className = 'product';
+  div.innerHTML = `
+    <img src="${product.img}" alt="${product.name}">
+    <h3>${product.name}</h3>
+    <div class="price">${product.price} دج</div>
+    <div class="pack">الكمية في العلبة: ${product.pack}</div>
+    <input type="number" id="qty-${product.id}" placeholder="الكمية" />
+  `;
+
+  const qtyInput = div.querySelector(`#qty-${product.id}`);
+
+
+  // ✅ ✅ هنا نُعيد الكمية المُخزّنة
+  const savedItem = cart.find(p => p.id === product.id);
+if (savedItem) {
+  qtyInput.value = savedItem.quantity;
+}
+
+  (function bindQtyInput(p, inputElement) {
+  inputElement.addEventListener('input', () => {
+    const value = inputElement.value.trim();
+    const quantity = parseInt(value);
+    const existingIndex = cart.findIndex(item => item.id === p.id);
+
+    if (value === '' || isNaN(quantity) || quantity <= 0) {
+      // 🧼 حذف المنتج من السلة إذا كانت الخانة فارغة أو الكمية غير صالحة
+      if (existingIndex !== -1) {
+        cart.splice(existingIndex, 1);
+      }
+    } else {
+      // ✅ تحديث الكمية أو إضافة المنتج
+      if (existingIndex !== -1) {
+        cart[existingIndex].quantity = quantity;
+      } else {
+        cart.push({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          quantity
+        });
+      }
     }
 
-    onValue(coverRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data && data.url) {
-        document.getElementById("coverImage").src = data.url;
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    if (document.getElementById("cartModal").style.display === 'flex') {
+      renderCart();
+    }
+  });
+})(product, qtyInput);
+
+  container.appendChild(div);
+});
+}
+function renderPagination() {
+  const totalPages = Math.ceil(allVisibleProducts.length / productsPerPage);
+  const paginationContainer = document.getElementById("pagination");
+  if (!paginationContainer) return;
+
+  paginationContainer.innerHTML = '';
+
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "«";
+  prevBtn.className = "page-btn";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.onclick = () => {
+    currentPage--;
+    renderProducts();
+    renderPagination();
+  };
+  paginationContainer.appendChild(prevBtn);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = "page-btn";
+    if (i === currentPage) btn.classList.add("active");
+    btn.onclick = () => {
+      currentPage = i;
+      renderProducts();
+      renderPagination();
+    };
+    paginationContainer.appendChild(btn);
+  }
+
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "»";
+  nextBtn.className = "page-btn";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.onclick = () => {
+    currentPage++;
+    renderProducts();
+    renderPagination();
+  };
+  paginationContainer.appendChild(nextBtn);
+}
+
+    
+    let currentPage = 1;
+const productsPerPage = 20;
+let allVisibleProducts = [];
+    let cart = [];
+try {
+  const savedCart = localStorage.getItem("cart");
+  if (savedCart) {
+    cart = JSON.parse(savedCart);
+  }
+} catch (e) {
+  console.error("فشل في قراءة السلة من localStorage:", e);
+  cart = [];
+}
+function addToCart(product) {
+  cart.push(product);
+  alert(`تمت إضافة ${product.name} إلى السلة.`);
+}
+
+document.getElementById("cartBtn").addEventListener("click", showCartModal);
+
+function renderCart() {
+  const cartItemsEl = document.getElementById("cartItems");
+  cartItemsEl.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; direction: rtl; font-family: 'Cairo', sans-serif; padding: 8px 0;">
+        <span style="font-size: 14px; color: #444;">
+           ${item.name} × ${item.quantity} = ${itemTotal} دج
+          <span style="color: #888;">(${item.price} دج لكل وحدة)</span>
+        </span>
+        <button onclick="removeFromCart(${index})"
+                style="background: none; border: none; font-size: 18px; color: red; cursor: pointer;">
+          
+        </button>
+      </div>
+    `;
+    cartItemsEl.appendChild(div);
+  });
+
+  const cartTotalEl = document.getElementById("cartTotal");
+  cartTotalEl.textContent = `المجموع: ${total} دج`;
+}
+
+document.getElementById("sendOrder").onclick = () => {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  if (!name || !phone || !address || cart.length === 0) {
+    alert("يرجى ملء جميع الخانات وإضافة منتجات إلى السلة.");
+    return;
+  }
+
+  const itemsText = cart.map(p => {
+  const total = p.price * p.quantity;
+  return `• ${p.quantity} . ${p.name} × ${p.price} = ${total} دج`;
+}).join('%0A');
+
+  const message = `طلب جديد من متجر Be Clean:%0A%0A${itemsText}%0A%0A الاسم: ${name}%0A الهاتف: ${phone}%0A العنوان: ${address}`;
+
+  const phoneNumber = "213562622988"; // ← ضع رقمك هنا بدون "+"
+  const whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+
+  window.open(whatsappLink, "_blank");
+  document.getElementById("cartModal").style.display = 'none';
+};
+
+</script>
+
+<!-- ✅ نافذة عرض الصورة الكبيرة (مستقلة تماماً) -->
+<div id="imageModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center;">
+  <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" />
+</div>
+
+<!-- ✅ نافذة السلة تبدأ من هنا -->
+<div id="cartModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:white; padding:20px; border-radius:16px; width:90%; max-width:360px; max-height:90vh; overflow-y:auto; box-shadow:0 6px 18px rgba(0,0,0,0.25); font-family:'Cairo', sans-serif; text-align:right;">
+    <h2 style="margin-top:0; margin-bottom:16px; color:#007bff; font-size:20px; text-align:center;">ملخص الطلب</h2>
+
+    <div id="cartItems" style="margin-bottom:15px; font-size:14px; color:#333;"></div>
+
+    <hr style="margin:12px 0;" />
+
+    <input id="name" type="text" placeholder="الاسم الكامل" style="width:100%; margin-bottom:10px; padding:8px 10px; border:1px solid #ccc; border-radius:8px; font-size:14px;" />
+    <input id="phone" type="text" placeholder="رقم الهاتف" style="width:100%; margin-bottom:10px; padding:8px 10px; border:1px solid #ccc; border-radius:8px; font-size:14px;" />
+    <input id="address" type="text" placeholder="العنوان" style="width:100%; margin-bottom:15px; padding:8px 10px; border:1px solid #ccc; border-radius:8px; font-size:14px;" />
+
+    <div id="cartTotal" style="font-weight: bold; margin-bottom: 10px; text-align: center;"></div>
+
+    <button id="sendOrder" style="background:#25D366; color:white; padding:10px; width:100%; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer;">
+      إرسال الطلب عبر واتساب
+    </button>
+  </div>
+</div>
+<script>
+  const cartModal = document.getElementById("cartModal");
+  if (cartModal) {
+    cartModal.addEventListener("click", function (e) {
+      if (e.target === cartModal) {
+        cartModal.style.display = "none";
       }
     });
-  </script>
+  }
+  // تكبير الصورة عند الضغط عليها
+document.addEventListener("click", function (e) {
+  if (e.target.tagName === "IMG" && e.target.closest(".product")) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    modalImg.src = e.target.src;
+    modal.style.display = "flex";
+  }
+});
 
+// إغلاق الصورة عند الضغط خارجها
+const imageModal = document.getElementById("imageModal");
+imageModal.addEventListener("click", function (e) {
+  if (e.target === imageModal) {
+    imageModal.style.display = "none";
+  }
+});
+</script>
 </body>
 </html>
