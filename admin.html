@@ -340,7 +340,7 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     img: document.getElementById('img').value,
     hidden: false
   };
-cov
+
   if (id) {
     update(ref(db, 'products/' + id), product);
   } else {
