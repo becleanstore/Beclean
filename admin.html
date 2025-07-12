@@ -223,18 +223,31 @@
       </div>
 
       <!-- زر الحفظ -->
-      <div style="margin-top: 10px;">
-        <button type="submit" class="action-btn" style="
-          padding: 8px 22px;
-          font-size: 14px;
-          background-color: #3498db;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: 0.3s;
-        ">حفظ</button>
-      </div>
+      <!-- أزرار الحفظ والإخفاء -->
+<div style="margin-top: 10px; display: flex; gap: 10px;">
+  <button type="submit" class="action-btn" style="
+    padding: 8px 22px;
+    font-size: 14px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  ">حفظ</button>
+
+  <button type="button" id="toggleVisibilityBtn" onclick="toggleVisibility()" style="
+    display: none;
+    padding: 8px 22px;
+    font-size: 14px;
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  ">إخفاء المنتج</button>
+</div>
 
     </form>
   </div>
@@ -281,6 +294,7 @@ function renderProductsPage(page) {
   pageItems.forEach(([id, product]) => {
     const div = document.createElement('div');
     div.className = 'product';
+    if (product.hidden) div.style.opacity = '0.4';
     div.innerHTML = `
       <img src="${product.img}" alt="${product.name}">
       <h3>${product.name}</h3>
@@ -326,6 +340,9 @@ window.editProduct = function(id) {
     document.getElementById('img').value = p.img;
     document.getElementById('editIndex').value = id;
     document.getElementById('formTitle').textContent = 'تعديل المنتج';
+    const toggleBtn = document.getElementById('toggleVisibilityBtn');
+toggleBtn.style.display = 'inline-block';
+toggleBtn.textContent = p.hidden ? 'إظهار المنتج' : 'إخفاء المنتج';
     document.getElementById('addProductModal').style.display = 'flex';
   }, { onlyOnce: true });
 };
@@ -340,7 +357,6 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     img: document.getElementById('img').value,
     hidden: false
   };
-
   if (id) {
     update(ref(db, 'products/' + id), product);
   } else {
@@ -428,6 +444,7 @@ window.onload = function () {
     document.getElementById('logoutButton').style.display = 'block';
     document.getElementById('addProductBtn').style.display = 'block';
   }
+  document.getElementById('addProductModal').style.display = 'none';
 
   // زر + فقط هو من يفتح نافذة إضافة المنتج
   document.getElementById('addProductBtn').addEventListener('click', () => {
@@ -452,6 +469,18 @@ document.getElementById("searchInput").addEventListener("input", function () {
     }
   });
 });
+window.toggleVisibility = function () {
+  const id = document.getElementById('editIndex').value;
+  const current = allProducts[id];
+  if (!id || !current) return;
+
+  const newHiddenState = !current.hidden;
+  update(ref(db, 'products/' + id), { hidden: newHiddenState }).then(() => {
+    const toggleBtn = document.getElementById('toggleVisibilityBtn');
+    toggleBtn.textContent = newHiddenState ? 'إظهار المنتج' : 'إخفاء المنتج';
+    showPage(currentPage);
+  });
+};
 function renderPagination(totalPages, currentPage) {
   const pagination = document.getElementById('pagination');
   pagination.innerHTML = '';
