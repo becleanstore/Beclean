@@ -325,8 +325,7 @@ onValue(productsRef, (snapshot) => {
 
 window.deleteProduct = function(id) {
   if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟')) {
-    set(ref(db, `products/${id}`), { password: "BrahimBB2025" });
-remove(ref(db, `products/${id}`));
+    remove(ref(db, `products/${id}`));
   }
 };
 
@@ -359,12 +358,10 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     hidden: false
   };
   if (id) {
-    product.password = "BrahimBB2025";
-update(ref(db, 'products/' + id), product);
+    update(ref(db, 'products/' + id), product);
   } else {
     const newRef = push(productsRef);
-product.password = "BrahimBB2025";
-set(newRef, product);
+    set(newRef, product);
   }
 
   document.getElementById('addProductModal').style.display = 'none';
