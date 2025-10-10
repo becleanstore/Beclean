@@ -427,7 +427,8 @@ window.checkPassword = async function () {
     // التحقق من UID إذا كان موجودًا في admins
     const adminRef = ref(db, 'admins/' + user.uid);
     onValue(adminRef, (snapshot) => {
-      if (snapshot.val() === true) {
+      const adminData = snapshot.val();
+if (adminData && adminData.isAdmin === true) {
         localStorage.setItem('auth', 'true'); // حفظ حالة تسجيل الدخول
         document.getElementById('loginModal').style.display = 'none';
         document.getElementById('logoutButton').style.display = 'block';
