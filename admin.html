@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ar">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>Be Clean Owner - Firebase</title>
@@ -23,25 +24,25 @@
       margin: 30px auto;
     }
     .products-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 بطاقات في السطر على الهاتف */
-  gap: 15px;
-  padding: 10px;
-}
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2 بطاقات في السطر على الهاتف */
+      gap: 15px;
+      padding: 10px;
+    }
 
-@media (min-width: 992px) {
-  .products-container {
-    grid-template-columns: repeat(5, 1fr); /* 5 بطاقات في السطر على الحاسوب */
-  }
-}
+    @media (min-width: 992px) {
+      .products-container {
+        grid-template-columns: repeat(5, 1fr); /* 5 بطاقات في السطر على الحاسوب */
+      }
+    }
 
-.product {
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-}
+    .product {
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      text-align: center;
+    }
     .product img {
       width: 100%;
       height: 140px;
@@ -98,18 +99,28 @@
   ✅ تمت إضافة المنتج بنجاح
 </div>
 <div style="text-align: center; margin: 20px 0;">
-  <input type="text" id="searchInput" placeholder="ابحث عن منتج..." 
+  <input type="text" id="searchInput" placeholder="ابحث عن منتج..."
          style="padding: 10px; width: 80%; max-width: 300px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo', sans-serif;" />
 </div>
 <div id="loginModal" style="display:flex;justify-content:center;align-items:center;position:fixed;inset:0;background:linear-gradient(135deg,#74ebd5,#ACB6E5);z-index:3000;">
   <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.3);width:90%;max-width:400px;text-align:center;">
     <h2 style="margin-bottom: 20px;">الإدارة</h2>
-    
+
+    <!-- **تمت إضافة هذا الحقل لحقل الإيميل** -->
+    <input
+      type="email"
+      id="adminEmail"
+      placeholder="أدخل البريد الإلكتروني"
+      style="width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box;"
+      required
+    >
+
     <input
       type="password"
       id="adminPassword"
       placeholder="أدخل كلمة السر"
       style="width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box;"
+      required
     >
 
     <button
@@ -143,7 +154,7 @@
     max-width: 420px;
     position: relative;
   " onclick="event.stopPropagation()">
-    
+
     <!-- زر الإغلاق -->
     <span style="
       position: absolute;
@@ -262,6 +273,9 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+// **تم إضافة استيراد Auth هنا في أعلى الملف كما طلبت**
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBJ_HabLDYFG9yCK7TtY5dY1gihRtHQH5Q",
@@ -274,6 +288,8 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+// **تم تعريف Auth هنا مرة واحدة**
+const auth = getAuth(app);
 const productsRef = ref(db, 'products');
 
 const container = document.getElementById('productsContainer');
@@ -325,8 +341,7 @@ onValue(productsRef, (snapshot) => {
 
 window.deleteProduct = function(id) {
   if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟')) {
-    update(ref(db, `products/${id}`), { password: "BrahimBB2025" })
-  .then(() => remove(ref(db, `products/${id}`)));
+    remove(ref(db, `products/${id}`));
   }
 };
 
@@ -342,8 +357,8 @@ window.editProduct = function(id) {
     document.getElementById('editIndex').value = id;
     document.getElementById('formTitle').textContent = 'تعديل المنتج';
     const toggleBtn = document.getElementById('toggleVisibilityBtn');
-toggleBtn.style.display = 'inline-block';
-toggleBtn.textContent = p.hidden ? 'إظهار المنتج' : 'إخفاء المنتج';
+    toggleBtn.style.display = 'inline-block';
+    toggleBtn.textContent = p.hidden ? 'إظهار المنتج' : 'إخفاء المنتج';
     document.getElementById('addProductModal').style.display = 'flex';
   }, { onlyOnce: true });
 };
@@ -356,15 +371,14 @@ document.getElementById('addProductForm').onsubmit = function(e) {
     price: +document.getElementById('price').value,
     pack: +document.getElementById('pack').value,
     img: document.getElementById('img').value,
-    hidden: false
+    // **الحفاظ على حالة hidden إذا كان المنتج موجودًا بالفعل**
+    hidden: id && allProducts[id] ? allProducts[id].hidden : false
   };
   if (id) {
-    product.password = "BrahimBB2025";
-update(ref(db, 'products/' + id), product);
+    update(ref(db, 'products/' + id), product);
   } else {
     const newRef = push(productsRef);
-product.password = "BrahimBB2025";
-set(newRef, product);
+    set(newRef, product);
   }
 
   document.getElementById('addProductModal').style.display = 'none';
@@ -372,17 +386,18 @@ set(newRef, product);
   showSuccess();
 };
 
-function showSuccess() {
+function showSuccess(message = 'تمت العملية بنجاح') { // **تعديل دالة showSuccess لتأخذ رسالة**
   const msg = document.getElementById('successMessage');
+  msg.textContent = `✅ ${message}`;
   msg.style.display = 'block';
   setTimeout(() => msg.style.display = 'none', 3000);
 }
 
 window.openAddModal = function () {
   document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
-  document.getElementById('addProductBtn').style.display = 'block';
   document.getElementById('addProductForm').reset();
   document.getElementById('editIndex').value = '';
+  document.getElementById('toggleVisibilityBtn').style.display = 'none'; // إخفاء زر الإخفاء/الإظهار عند إضافة منتج جديد
 };
 
 window.closeModal = function () {
@@ -395,22 +410,51 @@ document.getElementById('addProductModal').addEventListener('click', function (e
   }
 });
 
-window.checkPassword = function () {
-  const input = document.getElementById('adminPassword').value;
-  if (input === 'BrahimBB2025') {
-    localStorage.setItem('auth', 'true');
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('logoutButton').style.display = 'block';
-    document.getElementById('addProductBtn').style.display = 'block';
-  } else {
-    alert('كلمة المرور خاطئة');
+// **تعديل دالة checkPassword لاستخدام الإيميل وكلمة المرور**
+window.checkPassword = async function () {
+  const email = document.getElementById('adminEmail').value; // جلب الإيميل
+  const password = document.getElementById('adminPassword').value; // جلب كلمة السر
+
+  if (!email || !password) {
+    alert('الرجاء إدخال البريد الإلكتروني وكلمة السر.');
+    return;
+  }
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // التحقق من UID إذا كان موجودًا في admins
+    const adminRef = ref(db, 'admins/' + user.uid);
+    onValue(adminRef, (snapshot) => {
+      if (snapshot.val() === true) {
+        localStorage.setItem('auth', 'true'); // حفظ حالة تسجيل الدخول
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('logoutButton').style.display = 'block';
+        document.getElementById('addProductBtn').style.display = 'block';
+        showSuccess('تم تسجيل الدخول بنجاح!');
+      } else {
+        alert('ليس لديك صلاحية الدخول.');
+        signOut(auth); // تسجيل الخروج إذا لم يكن مسؤولاً
+        localStorage.removeItem('auth');
+      }
+    }, { onlyOnce: true });
+  } catch (error) {
+    console.error("Login error: ", error); // لطباعة الخطأ في الكونسول للمساعدة في التصحيح
+    alert('البريد الإلكتروني أو كلمة المرور خاطئة.');
   }
 };
 
-window.logout = function () {
+window.logout = async function () {
   if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
-    localStorage.removeItem('auth');
-    location.reload();
+    try {
+      await signOut(auth); // استخدام signOut من Firebase Auth
+      localStorage.removeItem('auth');
+      location.reload(); // إعادة تحميل الصفحة للعودة لشاشة تسجيل الدخول
+    } catch (error) {
+      console.error("Logout error: ", error);
+      alert("حدث خطأ أثناء تسجيل الخروج.");
+    }
   }
 };
 
@@ -420,6 +464,8 @@ function renderCoverImage() {
     const data = snapshot.val();
     if (data && data.url) {
       document.getElementById("coverImage").src = data.url;
+    } else {
+      document.getElementById("coverImage").src = "https://via.placeholder.com/1000x200?text=Shop+Cover"; // صورة افتراضية
     }
   });
 }
@@ -433,7 +479,7 @@ window.saveCoverImage = function () {
   const link = document.getElementById("coverInput").value.trim();
   if (link) {
     set(ref(db, 'store/cover'), { url: link })
-      .then(() => alert("✅ تم حفظ صورة الغلاف"))
+      .then(() => showSuccess("✅ تم حفظ صورة الغلاف"))
       .catch(() => alert("❌ حدث خطأ أثناء الحفظ"));
   } else {
     alert("❌ الرجاء إدخال رابط صحيح");
@@ -446,14 +492,12 @@ window.onload = function () {
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('logoutButton').style.display = 'block';
     document.getElementById('addProductBtn').style.display = 'block';
+  } else {
+    document.getElementById('loginModal').style.display = 'flex'; // تأكد من إظهار المودال إذا لم يكن مسجلاً الدخول
   }
-  document.getElementById('addProductModal').style.display = 'none';
-
   // زر + فقط هو من يفتح نافذة إضافة المنتج
   document.getElementById('addProductBtn').addEventListener('click', () => {
-    document.getElementById('formTitle').textContent = 'إضافة منتج جديد';
-    document.getElementById('addProductForm').reset();
-    document.getElementById('editIndex').value = '';
+    openAddModal(); // استخدام دالتك الموحدة لفتح المودال
     document.getElementById('addProductModal').style.display = 'flex';
   });
 
@@ -482,6 +526,7 @@ window.toggleVisibility = function () {
     const toggleBtn = document.getElementById('toggleVisibilityBtn');
     toggleBtn.textContent = newHiddenState ? 'إظهار المنتج' : 'إخفاء المنتج';
     showPage(currentPage);
+    showSuccess(newHiddenState ? 'تم إخفاء المنتج' : 'تم إظهار المنتج'); // رسالة نجاح أوضح
   });
 };
 function renderPagination(totalPages, currentPage) {
